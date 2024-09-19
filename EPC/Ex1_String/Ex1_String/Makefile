@@ -4,9 +4,12 @@ CXX = clang++
 CXXFLAGS = -g -Wall -Iinclude
 
 # Directories
-OBJDIR = obj/Debug/src
-BINDIR = bin/Debug
-SRCDIR = src
+OBJDIR = Clang/obj
+BINDIR = Clang/bin
+#OBJDIR = gpp/obj
+#BINDIR = gpp/bin
+
+SRCDIR = ./
 
 # Target executable
 TARGET = $(BINDIR)/Ex1_String.exe
