@@ -1,36 +1,42 @@
 # Compiler
-# CXX = g++
-CXX = clang++
-CXXFLAGS = -g -Wall -Iinclude
+CC = cl
+CXX = $(CC)
+LD = link
+
+# Compiler Flags
+CXXFLAGS = /Zi /W4 /Iinclude
+LDFLAGS =
 
 # Directories
-OBJDIR = obj/Debug/src
-BINDIR = bin/Debug
+OBJDIR = obj\Debug\src
+BINDIR = bin\Debug
 SRCDIR = src
 
-# Target executable
-TARGET = $(BINDIR)/Ex1_String.exe
+# Source files and object files
+SOURCES = $(SRCDIR)\String.cpp main.cpp
+OBJECTS = $(OBJDIR)\String.obj $(OBJDIR)\main.obj
 
-# Source files
-SOURCES = $(SRCDIR)/String.cpp main.cpp
-OBJECTS = $(OBJDIR)/String.o $(OBJDIR)/main.o
+# Target executable
+TARGET = $(BINDIR)\Ex1_String.exe
 
 # Makefile rules
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	@mkdir -p $(BINDIR)
-	$(CXX) $(CXXFLAGS) -o $@ $(OBJECTS)
+	@mkdir $(BINDIR)
+	cmd.exe /c "$(VCINSTALLDIR)bin\link.exe" $(LDFLAGS) /OUT:$(TARGET) $(OBJECTS)
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	@mkdir -p $(OBJDIR)
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
+$(OBJDIR)\%.obj: $(SRCDIR)\%.cpp
+	@mkdir $(OBJDIR)
+	cmd.exe /c "$(VCINSTALLDIR)bin\cl.exe" $(CXXFLAGS) /c /Fo$@ $<
 
-$(OBJDIR)/main.o: main.cpp
-	@mkdir -p $(OBJDIR)
-	$(CXX) $(CXXFLAGS) -c -o $(OBJDIR)/main.o main.cpp
+$(OBJDIR)\main.obj: main.cpp
+	@mkdir $(OBJDIR)
+	cmd.exe /c "$(VCINSTALLDIR)bin\cl.exe" $(CXXFLAGS) /c /Fo$(OBJDIR)\main.obj main.cpp
 
 clean:
-	rm -rf $(OBJDIR) $(BINDIR)
+	del /Q $(OBJDIR)\*.obj
+	rmdir /S /Q $(OBJDIR)
+	del /Q $(TARGET)
 
 .PHONY: all clean

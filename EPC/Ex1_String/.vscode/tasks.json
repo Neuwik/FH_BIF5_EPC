@@ -1,0 +1,18 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build with MSVC",
+            "type": "shell",
+            "command": "cmd.exe",
+            "args": [
+                "/c",
+                "nmake /f Makefile"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "build": true
+            }
+        }
+    ]
+}
