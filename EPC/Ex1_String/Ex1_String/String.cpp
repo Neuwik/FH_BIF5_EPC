@@ -24,9 +24,13 @@ void String::allocate(size_t new_capacity)
 size_t String::stringLength(const char* str) const
 {
     size_t length = 0;
-    while (str[length] != '\0')
+    //forgot to implement before assigment submition
+    if (str != nullptr)
     {
-        ++length;
+        while (str[length] != '\0')
+        {
+            ++length;
+        }
     }
     return length;
 }
@@ -34,17 +38,17 @@ size_t String::stringLength(const char* str) const
 // replace data with copy of C-String
 void String::copyString(const char* src, size_t srcLen, size_t srcCap)
 {
+    if (srcCap <= srcLen)
+    {
+        allocate(srcLen + 1);
+    }
+    else
+    {
+        allocate(srcCap);
+    }
+
     if (src != nullptr)
     {
-        if (srcCap <= srcLen)
-        {
-            allocate(srcLen + 1);
-        }
-        else
-        {
-            allocate(srcCap);
-        }
-
         for (size_t i = 0; i < srcLen; ++i)
         {
             data[i] = src[i];
@@ -53,7 +57,7 @@ void String::copyString(const char* src, size_t srcLen, size_t srcCap)
         len = srcLen;
     }
 
-    data[len] = '\0';  // Nullterminator hinzufügen
+    data[len] = '\0';  // Nullterminator hinzufï¿½gen
 }
 
 // Konstruktor: const char*
@@ -142,7 +146,7 @@ size_t String::size() const
     return length();
 }
 
-// reserve(): Speicher für den String reservieren
+// reserve(): Speicher fï¿½r den String reservieren
 void String::reserve(size_t new_capacity)
 {
     if (new_capacity == cap)
