@@ -38,6 +38,17 @@ size_t String::stringLength(const char* str) const
 // replace data with copy of C-String
 void String::copyString(const char* src, size_t srcLen, size_t srcCap)
 {
+    if (src == nullptr)
+    {
+        freeAll();
+        return;
+    }
+
+    if (srcLen < 0)
+    {
+        srcLen = stringLength(src);
+    }
+    
     if (srcCap <= srcLen)
     {
         allocate(srcLen + 1);
@@ -60,16 +71,28 @@ void String::copyString(const char* src, size_t srcLen, size_t srcCap)
     data[len] = '\0';  // Nullterminator hinzuf�gen
 }
 
+// free all and reset
+void String::freeAll()
+{
+    delete[] data;
+    data = nullptr;
+    len = 0;
+    cap = 0;
+}
+
+// Konstruktor: empty
+String::String() : data(nullptr), len(0), cap(0) { }
+
 // Konstruktor: const char*
 String::String(const char* str) : data(nullptr), len(stringLength(str)), cap(len + 1)
 {
-    copyString(str, stringLength(str));
+    copyString(str, len);
 }
 
 // Destruktor: Freigeben des Speichers ???
 String::~String()
 {
-    delete[] data;
+    freeAll();
 }
 
 // Copy-Konstruktor
@@ -91,6 +114,8 @@ String& String::operator=(const String& other)
 {
     if (this != &other)
     {
+        freeAll();
+
         copyString(other.data, other.len, other.cap);
     }
     return *this;
@@ -112,20 +137,55 @@ String& String::operator=(String&& other) noexcept
     return *this;
 }
 
-// append-Methode
-void String::append(const String& other)
+// Overloaded = const char*
+String& String::operator=(const char* str)
 {
-    size_t new_len = len + other.len;
+    copyString(str, stringLength(str));
+    return *this;
+}
 
-    reserve(new_len + 1);
+// Overloaded += String
+String& String::operator+=(const String& other)
+{
+    return append(other);
+}
 
-    for (size_t i = 0; i < other.len; ++i)
+// Overloaded += const char*
+String& String::operator+=(const char* str)
+{
+    return append(str);
+}
+
+// append-Methode: const char*
+String& String::append(const char* str, int strLen)
+{
+    if (str != nullptr)
     {
-        data[len + i] = other.data[i];
-    }
-    data[len + other.len] = '\0';
+        if (strLen < 0)
+        {
+            strLen = stringLength(str);
+        }
 
-    len = new_len;
+        size_t new_len = len + strLen;
+
+        reserve(new_len + 1);
+
+        for (size_t i = 0; i < strLen; ++i)
+        {
+            data[len + i] = str[i];
+        }
+        data[new_len] = '\0';
+
+        len = new_len;
+    }
+    
+    return *this;
+}
+
+// append-Methode: String
+String& String::append(const String& other)
+{
+    return append(other.data, other.len);
 }
 
 // c_str(): get data as const char*
