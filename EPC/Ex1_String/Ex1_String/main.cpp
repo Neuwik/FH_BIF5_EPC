@@ -1,235 +1,163 @@
-#include <cassert>  // for assert
-#include <iostream>
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include "doctest.h"
 #include "String.h"
 
-// Test Default Constructor: Empty string
-void testDefaultConstructor()
-{
+TEST_CASE("Default Constructor: Empty string") {
     String str;
-    assert(str.length() == 0);
-    assert(str.capacity() == 0);
-    assert(str.c_str() == nullptr);
-    std::cout << "testDefaultConstructor passed." << std::endl;
+    CHECK(str.length() == 0);
+    CHECK(str.capacity() == 0);
+    CHECK(str.c_str() == nullptr);
 }
 
-// Test Constructor from const char*
-void testConstructorFromCString()
-{
+TEST_CASE("Constructor from const char*") {
     String str("Hello");
-    assert(str.length() == 5);
-    assert(str.capacity() >= 6);  // Capacity should be at least length + 1 (for '\0')
-    assert(std::string(str.c_str()) == "Hello");
-    std::cout << "testConstructorFromCString passed." << std::endl;
+    CHECK(str.length() == 5);
+    CHECK(str.capacity() >= 6);  // Capacity should be at least length + 1 (for '\0')
+    CHECK(std::string(str.c_str()) == "Hello");
 }
 
-// Test Copy Constructor
-void testCopyConstructor()
-{
+TEST_CASE("Copy Constructor") {
     String str1("Copy this");
     String str2(str1);  // Copy constructor
-    assert(str2.length() == str1.length());
-    assert(std::string(str2.c_str()) == "Copy this");
-    assert(str1.c_str() != str2.c_str());  // Ensure deep copy
-    std::cout << "testCopyConstructor passed." << std::endl;
+    CHECK(str2.length() == str1.length());
+    CHECK(std::string(str2.c_str()) == "Copy this");
+    CHECK(str1.c_str() != str2.c_str());  // Ensure deep copy
 }
 
-// Test Move Constructor
-void testMoveConstructor()
-{
+TEST_CASE("Move Constructor") {
     String str1("Move this");
     String str2(std::move(str1));  // Move constructor
-    assert(str2.length() == 9);
-    assert(std::string(str2.c_str()) == "Move this");
-    assert(str1.c_str() == nullptr);  // Ensure moved from
-    assert(str1.length() == 0);
-    std::cout << "testMoveConstructor passed." << std::endl;
+    CHECK(str2.length() == 9);
+    CHECK(std::string(str2.c_str()) == "Move this");
+    CHECK(str1.c_str() == nullptr);  // Ensure moved from
+    CHECK(str1.length() == 0);
 }
 
-// Test Copy Assignment Operator
-void testCopyAssignmentOperator()
-{
+TEST_CASE("Copy Assignment Operator") {
     String str1("Copy assignment");
     String str2 = str1;  // Copy assignment
-    assert(str2.length() == str1.length());
-    assert(std::string(str2.c_str()) == "Copy assignment");
-    assert(str1.c_str() != str2.c_str());  // Ensure deep copy
-    std::cout << "testCopyAssignmentOperator passed." << std::endl;
+    CHECK(str2.length() == str1.length());
+    CHECK(std::string(str2.c_str()) == "Copy assignment");
+    CHECK(str1.c_str() != str2.c_str());  // Ensure deep copy
 }
 
-// Test Move Assignment Operator
-void testMoveAssignmentOperator()
-{
+TEST_CASE("Move Assignment Operator") {
     String str1("Move assignment");
     String str2;
     str2 = std::move(str1);  // Move assignment
-    assert(str2.length() == 15);
-    assert(std::string(str2.c_str()) == "Move assignment");
-    assert(str1.c_str() == nullptr);  // Ensure moved from
-    assert(str1.length() == 0);
-    std::cout << "testMoveAssignmentOperator passed." << std::endl;
+    CHECK(str2.length() == 15);
+    CHECK(std::string(str2.c_str()) == "Move assignment");
+    CHECK(str1.c_str() == nullptr);  // Ensure moved from
+    CHECK(str1.length() == 0);
 }
 
-// Test Overloaded = const char*
-void testAssignmentFromCString()
-{
+TEST_CASE("Assignment from const char*") {
     String str;
     str = "Assign const char*";
-    assert(str.length() == 18);
-    assert(std::string(str.c_str()) == "Assign const char*");
-    std::cout << "testAssignmentFromCString passed." << std::endl;
+    CHECK(str.length() == 18);
+    CHECK(std::string(str.c_str()) == "Assign const char*");
 }
 
-// Test Overloaded += String
-void testPlusEqualsString()
-{
+TEST_CASE("Overloaded += String") {
     String str1("Hello");
     String str2(" World");
     str1 += str2;
-    assert(str1.length() == 11);
-    assert(std::string(str1.c_str()) == "Hello World");
-    std::cout << "testPlusEqualsString passed." << std::endl;
+    CHECK(str1.length() == 11);
+    CHECK(std::string(str1.c_str()) == "Hello World");
 }
 
-// Test Overloaded += const char*
-void testPlusEqualsCString()
-{
+TEST_CASE("Overloaded += const char*") {
     String str("Hello");
     str += " World!";
-    assert(str.length() == 12);
-    assert(std::string(str.c_str()) == "Hello World!");
-    std::cout << "testPlusEqualsCString passed." << std::endl;
+    CHECK(str.length() == 12);
+    CHECK(std::string(str.c_str()) == "Hello World!");
 }
 
-// Test append() const char*
-void testAppendCString()
-{
+TEST_CASE("append() const char*") {
     String str("Append");
     str.append(" this");
-    assert(str.length() == 11);
-    assert(std::string(str.c_str()) == "Append this");
-    std::cout << "testAppendCString passed." << std::endl;
+    CHECK(str.length() == 11);
+    CHECK(std::string(str.c_str()) == "Append this");
 }
 
-// Test append() String
-void testAppendString()
-{
+TEST_CASE("append() String") {
     String str1("Append");
     String str2(" this");
     str1.append(str2);
-    assert(str1.length() == 11);
-    assert(std::string(str1.c_str()) == "Append this");
-    std::cout << "testAppendString passed." << std::endl;
+    CHECK(str1.length() == 11);
+    CHECK(std::string(str1.c_str()) == "Append this");
 }
 
-// Test reserve() (increase capacity)
-void testReserve()
-{
+TEST_CASE("reserve()") {
     String str("Reserve test");
     size_t old_capacity = str.capacity();
     str.reserve(old_capacity + 1);  // Reserve more than needed
-    assert(str.capacity() > old_capacity);  // Capacity should be updated
-    assert(std::string(str.c_str()) == "Reserve test");
-    std::cout << "testReserve passed." << std::endl;
+    CHECK(str.capacity() > old_capacity);  // Capacity should be updated
+    CHECK(std::string(str.c_str()) == "Reserve test");
 }
 
-// Test capacity()
-void testCapacity()
-{
+TEST_CASE("capacity()") {
     String str("Capacity test");
     size_t capacity = str.capacity();
-    assert(capacity >= str.length() + 1);  // Capacity should be at least length + 1
-    std::cout << "testCapacity passed." << std::endl;
+    CHECK(capacity >= str.length() + 1);  // Capacity should be at least length + 1
 }
 
-// Test edge case: Appending nullptr or empty string
-void testEdgeCasesAppendingNullOrEmpty()
-{
+/* NO + Operator 
+TEST_CASE("Concatenation of two String objects") {
+    String s1("First");
+    String s2(" Second");
+
+    String s3 = s1 + s2;
+    CHECK(s3.length() == (s1.length() + s2.length()));
+    CHECK(std::string(s3.c_str()) == "First Second");
+}
+
+TEST_CASE("Concatenation of String object and const char*") {
+    String s3("First SecondHello");
+    const String s4 = s3 + "World";
+    CHECK(s4.length() == 21);  // "First SecondHello" + "World"
+    CHECK(std::string(s4.c_str()) == "First SecondHelloWorld");
+}*/
+
+TEST_CASE("Edge cases: Appending nullptr or empty string") {
     String str("Base");
     str += nullptr;  // Should handle gracefully without crashing
-    assert(std::string(str.c_str()) == "Base");  // No change
+    CHECK(std::string(str.c_str()) == "Base");  // No change
 
     str.append(nullptr);
-    assert(std::string(str.c_str()) == "Base");  // No change
+    CHECK(std::string(str.c_str()) == "Base");  // No change
 
     str.append("", 0);  // Appending empty string should work
-    assert(std::string(str.c_str()) == "Base");  // No change
-
-    std::cout << "testEdgeCasesAppendingNullOrEmpty passed." << std::endl;
+    CHECK(std::string(str.c_str()) == "Base");  // No change
 }
 
-// Test edge case: Constructing with nullptr
-void testEdgeCaseConstructorWithNullptr()
-{
+TEST_CASE("Edge case: Constructor with nullptr") {
     String str(nullptr);  // Should handle gracefully
-    assert(str.length() == 0);
-    assert(str.c_str() == nullptr);
-    std::cout << "testEdgeCaseConstructorWithNullptr passed." << std::endl;
+    CHECK(str.length() == 0);
+    CHECK(str.c_str() == nullptr);
 }
 
-// Test edge case: Negative values
-void testEdgeCaseNegativeValues()
-{
+TEST_CASE("Edge case: Negative values") {
     String str("Negative test");
     str.append(" still works", -1);  // appends all
-    assert(std::string(str.c_str()) == "Negative test still works");
-    std::cout << "testEdgeCaseNegativeValues passed." << std::endl;
+    CHECK(std::string(str.c_str()) == "Negative test still works");
 }
 
-// Test edge case: append part of string
-void testEdgeCaseAppendPartly()
-{
+TEST_CASE("Edge case: Append part of string") {
     String str("append");
-    str.append(" partly", 5);  // appends all
-    assert(std::string(str.c_str()) == "append part");
-    std::cout << "testEdgeCaseAppendPartly passed." << std::endl;
+    str.append(" partly", 5);  // appends part
+    CHECK(std::string(str.c_str()) == "append part");
 }
 
-// Test append chain
-void testAppendChain()
-{
+TEST_CASE("append() chain") {
     String str("start");
     str.append(" middle").append(" end");
-    assert(std::string(str.c_str()) == "start middle end");
-    std::cout << "testAppendChain passed." << std::endl;
+    CHECK(std::string(str.c_str()) == "start middle end");
 }
 
-// Test edge case: Reserve with smaller value
-void testEdgeCaseReserveSmallerValue()
-{
+TEST_CASE("Edge case: Reserve with smaller value") {
     String str("Small reserve test");
     size_t old_capacity = str.capacity();
     str.reserve(5);  // Should not reduce capacity
-    assert(str.capacity() == old_capacity);
-    std::cout << "testEdgeCaseReserveSmallerValue passed." << std::endl;
-}
-
-void runStringTests()
-{
-    testDefaultConstructor();
-    testConstructorFromCString();
-    testCopyConstructor();
-    testMoveConstructor();
-    testCopyAssignmentOperator();
-    testMoveAssignmentOperator();
-    testAssignmentFromCString();
-    testPlusEqualsString();
-    testPlusEqualsCString();
-    testAppendCString();
-    testAppendString();
-    testReserve();
-    testCapacity();
-    testEdgeCasesAppendingNullOrEmpty();
-    testEdgeCaseConstructorWithNullptr();
-    testEdgeCaseNegativeValues();
-    testEdgeCaseAppendPartly();
-    testAppendChain();
-    testEdgeCaseReserveSmallerValue();
-
-    std::cout << "All tests passed!" << std::endl;
-}
-
-int main()
-{
-    runStringTests();
-    return 0;
+    CHECK(str.capacity() == old_capacity);
 }
