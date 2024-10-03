@@ -156,6 +156,28 @@ String& String::operator+=(const char* str)
     return append(str);
 }
 
+// + operator for two String objects
+String operator+(const String& lhs, const String& rhs)
+{
+    String result(lhs);    
+    result += rhs;         
+    return result;
+}
+
+// + operator for String and const char*
+String operator+(const String& lhs, const char* rhs)
+{
+    String result(lhs);    
+    result += rhs;         
+    return result;
+}
+
+// Implementierung der Konvertierungsfunktion zu const char*
+String::operator const char*() const
+{
+    return data;  
+}
+
 // append-Methode: const char*
 String& String::append(const char* str, int strLen)
 {
@@ -167,8 +189,14 @@ String& String::append(const char* str, int strLen)
         }
 
         size_t new_len = len + strLen;
-
+        bool sameString = str == data;
+        
         reserve(new_len + 1);
+
+        if(sameString)
+        {
+            str = data;
+        }
 
         for (size_t i = 0; i < strLen; ++i)
         {

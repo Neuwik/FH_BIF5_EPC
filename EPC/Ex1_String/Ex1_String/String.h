@@ -52,6 +52,15 @@ class String
 
         // Overloaded += const char*
         String& operator+=(const char* str);
+        
+        // Overloaded + operator for two String objects
+        friend String operator+(const String& lhs, const String& rhs);
+
+        // Overloaded + operator for String and const char*
+        friend String operator+(const String& lhs, const char* rhs);
+
+        // Konvertierungsoperator zu const char*
+        operator const char*() const;
 
         // append-Methode: const char*
         String& append(const char* str, int strLen = -1);

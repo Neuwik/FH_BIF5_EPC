@@ -1,39 +1,55 @@
-# Compiler
-# CXX = g++
-CXX = clang++
+# Compiler settings
+CXX_GPP = g++
+CXX_CLANG = clang++
 CXXFLAGS = -g -Wall -Iinclude
 
-# Directories
-OBJDIR = Clang/obj
-BINDIR = Clang/bin
-#OBJDIR = gpp/obj
-#BINDIR = gpp/bin
+# Directories for g++
+GPP_OBJDIR = gpp/obj
+GPP_BINDIR = gpp/bin
+GPP_TARGET = $(GPP_BINDIR)/Ex1_String.exe
 
-SRCDIR = ./
-
-# Target executable
-TARGET = $(BINDIR)/Ex1_String.exe
+# Directories for clang++
+CLANG_OBJDIR = clang/obj
+CLANG_BINDIR = clang/bin
+CLANG_TARGET = $(CLANG_BINDIR)/Ex1_String.exe
 
 # Source files
+SRCDIR = ./
 SOURCES = $(SRCDIR)/String.cpp main.cpp
-OBJECTS = $(OBJDIR)/String.o $(OBJDIR)/main.o
 
-# Makefile rules
-all: $(TARGET)
+# Object files for g++
+GPP_OBJECTS = $(GPP_OBJDIR)/String.o $(GPP_OBJDIR)/main.o
 
-$(TARGET): $(OBJECTS)
-	@mkdir -p $(BINDIR)
-	$(CXX) $(CXXFLAGS) -o $@ $(OBJECTS)
+# Object files for clang++
+CLANG_OBJECTS = $(CLANG_OBJDIR)/String.o $(CLANG_OBJDIR)/main.o
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	@mkdir -p $(OBJDIR)
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
+# Default target: build both g++ and clang++
+all: gpp clang
 
-$(OBJDIR)/main.o: main.cpp
-	@mkdir -p $(OBJDIR)
-	$(CXX) $(CXXFLAGS) -c -o $(OBJDIR)/main.o main.cpp
+# Build with g++
+gpp: $(GPP_TARGET)
 
+$(GPP_TARGET): $(GPP_OBJECTS)
+	@mkdir -p $(GPP_BINDIR)
+	$(CXX_GPP) $(CXXFLAGS) -o $@ $(GPP_OBJECTS)
+
+$(GPP_OBJDIR)/%.o: $(SRCDIR)/%.cpp
+	@mkdir -p $(GPP_OBJDIR)
+	$(CXX_GPP) $(CXXFLAGS) -c -o $@ $<
+
+# Build with clang++
+clang: $(CLANG_TARGET)
+
+$(CLANG_TARGET): $(CLANG_OBJECTS)
+	@mkdir -p $(CLANG_BINDIR)
+	$(CXX_CLANG) $(CXXFLAGS) -o $@ $(CLANG_OBJECTS)
+
+$(CLANG_OBJDIR)/%.o: $(SRCDIR)/%.cpp
+	@mkdir -p $(CLANG_OBJDIR)
+	$(CXX_CLANG) $(CXXFLAGS) -c -o $@ $<
+
+# Clean both g++ and clang++ builds
 clean:
-	rm -rf $(OBJDIR) $(BINDIR)
+	rm -rf $(GPP_OBJDIR) $(GPP_BINDIR) $(CLANG_OBJDIR) $(CLANG_BINDIR)
 
-.PHONY: all clean
+.PHONY: all clean gpp clang

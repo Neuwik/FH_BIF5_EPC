@@ -72,6 +72,32 @@ TEST_CASE("Overloaded += const char*") {
     CHECK(str.length() == 12);
     CHECK(std::string(str.c_str()) == "Hello World!");
 }
+TEST_CASE("Test der Konvertierung zu const char*") {
+    String s("Hallo");
+    const char* cstr = s;  
+    
+    CHECK(cstr != nullptr); 
+    CHECK(std::strcmp(cstr, "Hallo") == 0);  
+}
+
+TEST_CASE("Test des += Operators mit String") {
+    String s1("Hallo");
+    String s2(" Welt");
+    
+    s1 += s2;  
+    
+    CHECK(s1.length() == 10); 
+    CHECK(std::strcmp(s1.c_str(), "Hallo Welt") == 0);  
+}
+
+TEST_CASE("Test des += Operators mit const char*") {
+    String s("Hallo");
+    
+    s += " Welt";  
+    
+    CHECK(s.length() == 10);  
+    CHECK(std::strcmp(s.c_str(), "Hallo Welt") == 0);  
+}
 
 TEST_CASE("append() const char*") {
     String str("Append");
@@ -102,7 +128,6 @@ TEST_CASE("capacity()") {
     CHECK(capacity >= str.length() + 1);  // Capacity should be at least length + 1
 }
 
-/* NO + Operator 
 TEST_CASE("Concatenation of two String objects") {
     String s1("First");
     String s2(" Second");
@@ -115,9 +140,9 @@ TEST_CASE("Concatenation of two String objects") {
 TEST_CASE("Concatenation of String object and const char*") {
     String s3("First SecondHello");
     const String s4 = s3 + "World";
-    CHECK(s4.length() == 21);  // "First SecondHello" + "World"
+    CHECK(s4.length() == 22);  // "First SecondHello" + "World"
     CHECK(std::string(s4.c_str()) == "First SecondHelloWorld");
-}*/
+}
 
 TEST_CASE("Edge cases: Appending nullptr or empty string") {
     String str("Base");
@@ -160,4 +185,98 @@ TEST_CASE("Edge case: Reserve with smaller value") {
     size_t old_capacity = str.capacity();
     str.reserve(5);  // Should not reduce capacity
     CHECK(str.capacity() == old_capacity);
+}
+
+TEST_CASE("Concatenation with empty String using + operator") {
+    String empty;
+    String str("Non-empty");
+
+    String result1 = empty + str;
+    CHECK(result1.length() == str.length());
+    CHECK(std::string(result1.c_str()) == "Non-empty");
+
+    String result2 = str + empty;
+    CHECK(result2.length() == str.length());
+    CHECK(std::string(result2.c_str()) == "Non-empty");
+
+    String result3 = empty + "";  
+    CHECK(result3.length() == 0);  
+    CHECK(std::strcmp(result3.c_str(), "") == 0);  
+}
+
+TEST_CASE("Concatenation with empty String using += operator") {
+    String str("Non-empty");
+    String empty;
+
+    str += empty;
+    CHECK(str.length() == 9); 
+    CHECK(std::string(str.c_str()) == "Non-empty");
+
+    empty += str;
+    CHECK(empty.length() == str.length());
+    CHECK(std::string(empty.c_str()) == "Non-empty");
+}
+
+TEST_CASE("Concatenation of large Strings") {
+    String large1("LargeString1");
+    String large2("LargeString2");
+    
+    for (int i = 0; i < 1000; ++i) {
+        large1 += "x";  // Wiederholt Zeichen anhängen
+        large2 += "y";
+    }
+
+    String result = large1 + large2;
+    CHECK(result.length() == large1.length() + large2.length());
+    CHECK(result.capacity() >= result.length() + 1);
+}
+
+TEST_CASE("Chained concatenation using + operator") {
+    String str1("First");
+    String str2(" Second");
+    String str3(" Third");
+
+    String result = str1 + str2 + str3;
+    CHECK(result.length() == (str1.length() + str2.length() + str3.length()));
+    CHECK(std::string(result.c_str()) == "First Second Third");
+}
+
+TEST_CASE("Chained concatenation using += operator") {
+    String str("Start");
+    str += " middle";
+    str += " end";
+
+    CHECK(str.length() == 16);
+    CHECK(std::string(str.c_str()) == "Start middle end");
+}
+
+TEST_CASE("Concatenation with nullptr using + operator") {
+    String str("Valid String");
+
+    String result = str + nullptr;  
+    CHECK(std::string(result.c_str()) == "Valid String");
+}
+
+TEST_CASE("Self-concatenation with += operator") {
+    String str("Repeat");
+    str += str;  
+
+    CHECK(str.length() == 12);  
+    CHECK(std::string(str.c_str()) == "RepeatRepeat");  
+}
+
+TEST_CASE("Self-concatenation with + operator") {
+    String str("Repeat");
+
+    String result = str + str;
+    CHECK(result.length() == 12);  
+    CHECK(std::string(result.c_str()) == "RepeatRepeat");
+}
+
+TEST_CASE("Repeated concatenation using += operator (performance)") {
+    String str("x");
+    for (int i = 0; i < 10000; ++i) {
+        str += "x";
+    }
+    CHECK(str.length() == 10001);
 }
