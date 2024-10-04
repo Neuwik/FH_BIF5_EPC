@@ -198,7 +198,7 @@ String& String::append(const char* str, int strLen)
             str = data;
         }
 
-        for (size_t i = 0; i < strLen; ++i)
+        for (int i = 0; i < strLen; ++i)
         {
             data[len + i] = str[i];
         }

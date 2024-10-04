@@ -53,6 +53,17 @@ class String
         // Overloaded += const char*
         String& operator+=(const char* str);
         
+        /* TO DO (andere Gruppe hat es so) (alte löschen weil sonst doppelt declariert)
+        // Overloaded + String
+        String& operator+(const String& other);
+
+        // Overloaded + const char*
+        String& operator+(const char* str);
+        
+        // Overloaded + operator for const char* and String
+        friend String operator+(const char* lhs, const String& rhs);
+        */
+
         // Overloaded + operator for two String objects
         friend String operator+(const String& lhs, const String& rhs);
 
