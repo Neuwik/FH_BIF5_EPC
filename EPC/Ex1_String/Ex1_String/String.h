@@ -53,22 +53,14 @@ class String
         // Overloaded += const char*
         String& operator+=(const char* str);
         
-        /* TO DO (andere Gruppe hat es so) (alte löschen weil sonst doppelt declariert)
         // Overloaded + String
-        String& operator+(const String& other);
+        String operator+(const String& other) const;
 
         // Overloaded + const char*
-        String& operator+(const char* str);
+        String operator+(const char* str) const;
         
         // Overloaded + operator for const char* and String
         friend String operator+(const char* lhs, const String& rhs);
-        */
-
-        // Overloaded + operator for two String objects
-        friend String operator+(const String& lhs, const String& rhs);
-
-        // Overloaded + operator for String and const char*
-        friend String operator+(const String& lhs, const char* rhs);
 
         // Konvertierungsoperator zu const char*
         operator const char*() const;
@@ -93,6 +85,94 @@ class String
 
         // capacity(): get cap
         size_t capacity() const;
+
+        class Iterator
+        {
+            public:
+                // Type definitions for std::find
+                using iterator_category = std::forward_iterator_tag;
+                using value_type = char;
+                using difference_type = std::ptrdiff_t;
+                using pointer = char*;
+                using reference = char&;
+
+                // Constructor
+                Iterator(char* ptr, String* str) : current(ptr), stringRef(str) {}
+
+                // Dereference operator
+                reference operator*() const 
+                {
+                    return *current;
+                }
+
+                // Pointer operator
+                pointer operator->() const 
+                {
+                    return current;
+                }
+
+                // Pre-increment
+                Iterator& operator++() 
+                {
+                    if (current < stringRef->end().current)
+                    {
+                        ++current;
+                    }
+                    return *this;
+                }
+
+                // Post-increment
+                Iterator operator++(int) 
+                {
+                    Iterator temp = *this;
+                    ++(*this);
+                    return temp;
+                }
+
+                Iterator& operator--() 
+                {
+                    if (current > stringRef->begin().current)
+                    {
+                        --current;
+                    }
+                    return *this;
+                }
+
+                // Post-decrement operator
+                Iterator operator--(int) 
+                {
+                    Iterator temp = *this;
+                    --(*this);
+                    return temp;
+                }
+
+                // Comparison operators
+                bool operator==(const Iterator& other) const 
+                {
+                    return current == other.current;
+                }
+
+                bool operator!=(const Iterator& other) const 
+                {
+                    return current != other.current;
+                }
+
+            private:
+                char* current; // Pointer to current char
+                String* stringRef;  // Reference to String
+        };
+        
+
+        Iterator begin() 
+        {
+            return Iterator(data, this); // Return iterator to first char
+        }
+
+        Iterator end() 
+        {
+            return Iterator(data + len, this); // Return iterator to '\0'
+        }
+
 };
 
 #endif // STRING_H

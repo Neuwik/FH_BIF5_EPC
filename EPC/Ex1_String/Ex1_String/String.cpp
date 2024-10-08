@@ -157,15 +157,23 @@ String& String::operator+=(const char* str)
 }
 
 // + operator for two String objects
-String operator+(const String& lhs, const String& rhs)
+String String::operator+(const String& other) const
 {
-    String result(lhs);    
-    result += rhs;         
+    String result(*this);
+    result += other;
     return result;
 }
 
 // + operator for String and const char*
-String operator+(const String& lhs, const char* rhs)
+String String::operator+(const char* str) const
+{
+    String result(*this);
+    result += str;
+    return result;
+}
+
+// + operator for const char* and String
+String operator+(const char* lhs, const String& rhs)
 {
     String result(lhs);    
     result += rhs;         

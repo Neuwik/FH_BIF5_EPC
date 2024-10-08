@@ -138,6 +138,11 @@ TEST_CASE("Concatenation of two String objects") {
 }
 
 TEST_CASE("Concatenation of String object and const char*") {
+    String s1("World");
+    const String s2 = "Hello" + s1;
+    CHECK(s2.length() == 10);  // "Hello" + "World"
+    CHECK(std::string(s2.c_str()) == "HelloWorld");
+
     String s3("First SecondHello");
     const String s4 = s3 + "World";
     CHECK(s4.length() == 22);  // "First SecondHello" + "World"
@@ -279,4 +284,216 @@ TEST_CASE("Repeated concatenation using += operator (performance)") {
         str += "x";
     }
     CHECK(str.length() == 10001);
+}
+
+// ITERATOR TESTS
+
+TEST_CASE("Iterator on empty string") {
+    String empty("");
+    auto it = empty.begin();
+    CHECK(it == empty.begin());
+    CHECK(it == empty.end()); // begin == end for empty string
+}
+
+TEST_CASE("Iterator on non-empty string") {
+    String str("Hello");
+    auto it = str.begin();
+
+    CHECK(*it == 'H');
+
+    ++it;
+    CHECK(*it == 'e');
+
+    it++;
+    CHECK(*it == 'l');
+
+    ++++it;
+    CHECK(*it == 'o');
+
+    it++;
+    CHECK(it == str.end());
+}
+
+TEST_CASE("Iterator with nullptr") {
+    String empty;
+    auto it = empty.begin();
+    CHECK(it == empty.begin());
+    CHECK(it == empty.end()); // begin == end for empty string
+}
+
+TEST_CASE("Iterator comparison on the same string") {
+    String str("Iterator test");
+    auto it1 = str.begin();
+    auto it2 = str.begin();
+    
+    CHECK(it1 == it2);
+
+    ++it2;
+    CHECK(it1 != it2);
+}
+
+TEST_CASE("Iterator dereferencing beyond end") {
+    String str("Hello");
+    auto it = str.end();
+
+    CHECK(it == str.end());
+    CHECK(*it == '\0'); // end of string is '\0'
+}
+
+TEST_CASE("Using std::find with iterator") {
+    String str("Hello");
+    auto it = std::find(str.begin(), str.end(), 'H');
+    CHECK(it != str.end()); // Should find 'H'
+    CHECK(*it == 'H');
+
+    it = std::find(str.begin(), str.end(), 'W');
+    CHECK(it == str.end()); // Should not find 'W'
+}
+
+TEST_CASE("Iterator with append of empty string") {
+    String str("Hello");
+    auto it = str.begin();
+
+    str.append("");
+
+    CHECK(it == str.begin()); // Iterator should still work
+    CHECK(*it == 'H'); // Should be 'H'
+}
+
+TEST_CASE("Iterator with append of nullptr") {
+    String str("Hello");
+    auto it = str.begin();
+
+    str.append(nullptr);
+
+    CHECK(it == str.begin()); // Iterator should still work
+    CHECK(*it == 'H'); // Should be 'H'
+}
+
+TEST_CASE("Iterator on moved String") {
+    String str("Move this");
+    auto it1 = str.begin();
+
+    String movedStr(std::move(str)); // Move constructor
+
+    auto it2 = movedStr.begin();
+
+    CHECK(it1 == it2); // Should be the same pointers
+}
+
+TEST_CASE("Iterator increment at the end") {
+    String str("Hello");
+
+    auto it = str.end();
+    
+    CHECK(it == str.end()); // it at end
+    ++it;
+    CHECK(it == str.end());// it still at end
+    it++;
+    CHECK(it == str.end());// it still at end
+}
+
+TEST_CASE("Iterator decrement at the beginning") {
+    String str("Hello");
+
+    auto it = str.begin();
+    
+    CHECK(it == str.begin()); // it at beginning
+    --it;
+    CHECK(it == str.begin()); // it still at beginning
+    it--;
+    CHECK(it == str.begin()); // it still at beginning
+}
+
+TEST_CASE("Iterator modify value and check with another iterator") {
+    String str("Hello");
+    auto it1 = str.begin();
+    
+    // Override first character
+    *it1 = 'W';
+
+    auto it2 = str.begin();
+    CHECK(*it2 == 'W');
+    
+    ++it1;
+    ++it2;
+
+    *it2 = 'o'; // Change 'e' to 'o'
+    
+    CHECK(*it1 == 'o');
+    CHECK(*it2 == 'o'); // char changed for both
+    
+    CHECK(str.c_str() == std::string("Wollo")); // string is now "Wollo"
+}
+
+// APPEND NOT REALLY WORKING
+
+TEST_CASE("Iterator with initial nullptr") {
+    String str;
+    auto it1 = str.begin();
+
+    str.append("World");
+
+    auto it2 = str.begin();
+
+    CHECK(it1 != it2); // Iterator not working anymore, because String got bigger and allocated new space ???
+    CHECK(*it2 == 'W'); // 'W' is first char
+}
+
+TEST_CASE("Iterator with initial empty String") {
+    String str("");
+    auto it1 = str.begin();
+
+    str.append("World");
+
+    auto it2 = str.begin();
+
+    CHECK(it1 != it2); // Iterator not working anymore, because String got bigger and allocated new space ???
+    CHECK(*it2 == 'W'); // 'W' is first char
+}
+
+TEST_CASE("Self-concatenation with iterator") {
+    String str("Hello");
+    auto it = str.begin();
+    
+    str += str;
+
+    CHECK(*it != 'H'); // First char is NOT 'H', because String got bigger and allocated new space ???
+    
+    it = str.end();
+    it--;
+    CHECK(*it == 'o'); // Last char is 'o'
+}
+
+// BUT THIS WORKS ???
+TEST_CASE("Chained append and iteration") {
+    String str("Hello");
+    auto it = str.begin();
+
+    str.append(" ").append("World");
+
+    CHECK(it == str.begin()); // it still beginning ???
+
+    // Check iterator for full string
+    for (char expected : std::string("Hello World"))
+    {
+        CHECK(*it == expected);
+        ++it;
+    }
+}
+
+// Delete disables Iterator boundaries
+TEST_CASE("Iterator of deleted String") {
+    String str("Hello");
+
+    auto it1 = str.begin();
+    auto it2 = str.begin();
+    
+    // Delete the String
+    str.~String();
+
+    CHECK(*it1 != 'H'); // it value no longer 'H'
+
+    it1--;
+    CHECK(it1 != it2); // Pointer can move freely (leak ?!?)
 }
