@@ -1,10 +1,11 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 #include "UniquePtr.h"
+#include <string>
 
-struct Entity {
-    int id = -1;
-};
+// Explicit template instantiation for types used in the main program
+template class UniquePtr<Entity>;
+template class UniquePtr<std::string>;
 
 struct CustomDeleterEntity {
     int id = 0;
@@ -24,7 +25,7 @@ TEST_CASE("UniquePtr release and reset") {
     UniquePtr<Entity> entityPtr(new Entity{20});
     Entity* rawPtr = entityPtr.release();
     CHECK(rawPtr->id == 20);
-    CHECK(entityPtr.get() == nullptr);
+    CHECK(entityPtr.release() == nullptr);
     delete rawPtr;  // Manual deletion after release
 
     entityPtr.reset(new Entity{30});

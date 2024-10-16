@@ -1,10 +1,4 @@
 #include "UniquePtr.h"
-#include <string>  // For std::string
-
-// Forward declaration of the Entity struct
-struct Entity {
-    int id = -1;
-};
 
 // Constructor implementations
 template<typename T>
@@ -82,12 +76,6 @@ template<typename T>
 void UniquePtr<T>::swap(UniquePtr& other) {
     std::swap(ptr, other.ptr);
     std::swap(deleter, other.deleter);
-}
-
-// Get raw pointer
-template<typename T>
-T* UniquePtr<T>::get() const {
-    return ptr;
 }
 
 // Explicit template instantiation for types used in the main program

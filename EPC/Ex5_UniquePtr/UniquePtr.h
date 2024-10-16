@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <functional>
+#include <string>
 
 template<typename T>
 class UniquePtr {
@@ -40,7 +41,8 @@ public:
 
     // Swap managed object
     void swap(UniquePtr& other);
+};
 
-    // Get raw pointer
-    T* get() const;
+struct Entity {
+    int id = -1;
 };
